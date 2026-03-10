@@ -2,6 +2,14 @@ import React, { useState } from 'react'
 
 const AddTask = () => {
     const [addModal, setAddModal] = useState(false);
+    const [projectName, setProjectName] = useState("");
+    const [taskDescription, setTaskDescription] = useState("");
+
+    const handleInput = e => {
+        const {name, value} = e.target;
+        if(name === "projectName") setProjectName(value)
+        if(name === "taskDescription") setTaskDescription(value);
+    }
 
     const handleAdd = () => {
         setAddModal(false);
@@ -9,7 +17,7 @@ const AddTask = () => {
   return (
     <>
         <button className='bg-blue-500 text-white uppercase text-sm font-semibold py-1 mx-1.5 pl-2 
-        pr-2.5 rounded hover:opacity-70' 
+        pr-2.5 rounded hover:opacity-70'
             type='button'
             onClick={() => setAddModal(true)}
         >
@@ -38,7 +46,7 @@ const AddTask = () => {
                             x
                         </button>
                         </div>
-                        <form className='p-6'>
+                        <form className='px-6 pt-6 pb-4'>
                             <div>
 
                             <label className='track-wide
@@ -55,6 +63,9 @@ const AddTask = () => {
                                 leading-tight focus:outline-none
                                 focus:bg-white'
                                 id='project-name'
+                                name='projectName'
+                                value={projectName}
+                                onChange={handleInput}
                                 type='text'
                                 placeholder='Project name'
                                 required
@@ -75,6 +86,9 @@ const AddTask = () => {
                                 leading-tight focus:outline-none
                                 focus:bg-white'
                                     id='task-description'
+                                    name='taskDescription'
+                                    value={taskDescription}
+                                    onChange={handleInput}
                                     rows="5"
                                     placeholder='Task Description'
                                 />
