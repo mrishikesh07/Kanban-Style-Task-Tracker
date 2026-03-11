@@ -1,54 +1,46 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-const AddTask = ({taskList, setTaskList}) => {
-    const [addModal, setAddModal] = useState(false);
+const EditTask = ({task, taskList, setTaskList}) => {
+    const [editModal, setEditModal] = useState(false);
     const [projectName, setProjectName] = useState("");
     const [taskDescription, setTaskDescription] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
+
+    useEffect(()=>{
+        setProjectName(task.projectName);
+        setTaskDescription(task.taskDescription);
+    },[]);
+
     const handleInput = e => {
-        const {name, value} = e.target;
-        if(name === "projectName") {
-            setProjectName(value);
-            setErrorMessage("");
-        }
-        if(name === "projectName" && value === ""){
-            setErrorMessage("Enter Project Name To Continue");
-        }
-        if(name === "taskDescription") setTaskDescription(value);
+            const {name, value} = e.target;
+            if(name === "projectName") setProjectName(value)
+            if(name === "taskDescription") setTaskDescription(value);
     }
 
-    const handleAdd = (e) => {
+    const handleUpdate = (e) => {
         e.preventDefault();
-        if(!projectName){
-            setErrorMessage("Enter Project Name To Continue");
-        }else{
-            let timeStamp = new Date();
-            let tempList = taskList;
-            tempList.push({
-                projectName,
-                taskDescription,
-                timeStamp: timeStamp,
-                duration: 0
-            })
-            localStorage.setItem("taskList", JSON.stringify(tempList))
-            window.location.reload()
-            
-            setAddModal(false);
-            setProjectName("");
-            setTaskDescription("");
-        }
+        let taskIndex = taskList.indexOf(task);
+        taskList.splice(taskIndex, 1, {
+            projectName: projectName,
+            taskDescription: taskDescription,
+            timeStamp: task.timeStamp,
+            duration: task.duration
+        });
+        localStorage.setItem("taskList", JSON.stringify(taskList));
+        window.location.reload();
+        setEditModal(false);
     }
+
   return (
     <>
-        <button className='bg-blue-500 text-white uppercase text-sm font-semibold py-1 mx-1.5 pl-2 
-        pr-2.5 rounded hover:opacity-70'
-            type='button'
-            onClick={() => setAddModal(true)}
+        <button className='bg-gray-400 text-white text-sm
+        uppercase font-semibold py-1.5 px-3 rounded-lg mt-6
+        mb-1'
+        onClick={()=> setEditModal(true)}
         >
-            + New
+            Edit
         </button>
         {
-            addModal ? (
+            editModal ? (
                 <>
                     <div className='flex items-center justify-center overflow-x-hidden 
                         overflow-y-auto fixed inset-0 z-100'
@@ -60,12 +52,12 @@ const AddTask = ({taskList, setTaskList}) => {
 
                         <h3 className='text-3xl font-semibold'
                         >
-                            Add New Task
+                            Edit Task
                         </h3>
                         <button
                             className='px-1 text-gray-400 float-right
                             text-3xl leading-none font-semibold block'
-                            onClick={() => setAddModal(false)}
+                            onClick={() => setEditModal(false)}
                         >
                             x
                         </button>
@@ -83,7 +75,7 @@ const AddTask = ({taskList, setTaskList}) => {
                             <input
                                 className='w-full
                                 bg-gray-200 text-gray-700 border
-                                border-gray-200 rounded py-3 px-4
+                                border-gray-200 rounded py-3 px-4 mb-5
                                 leading-tight focus:outline-none
                                 focus:bg-white'
                                 id='project-name'
@@ -94,10 +86,6 @@ const AddTask = ({taskList, setTaskList}) => {
                                 placeholder='Project name'
                                 required
                             />
-                            <p className='text-red-500 text-center 
-                            mt-2 mb-5 '>
-                                {errorMessage}
-                            </p>
                             </div>
                             <div>
                                 <label className='track-wide
@@ -130,9 +118,9 @@ const AddTask = ({taskList, setTaskList}) => {
                                 className='bg-blue-500 text-white
                                 font-semibold uppercase text-sm
                                 px-6 py-3 rounded hover:opacity-70'
-                                onClick={handleAdd}
+                                onClick={handleUpdate}
                             >
-                                Add Task
+                                Update Task
                             </button>
                         </div>
                         </div>
@@ -144,4 +132,4 @@ const AddTask = ({taskList, setTaskList}) => {
   )
 }
 
-export default AddTask;
+export default EditTask;
